@@ -63,7 +63,7 @@ function loaded() {
     document.getElementById('tempoSlider').addEventListener('input', ()=>{tempoFactor=document.getElementById('tempoSlider').value;});
 
     document.getElementById('tempoSlider').value = tempoFactor;
-    document.getElementById('saveButton').addEventListener('click', addSong);
+    // document.getElementById('saveButton').addEventListener('click', addSong);
     document.getElementById("playButton").addEventListener('click', playSong);
 
 
@@ -73,7 +73,7 @@ function loaded() {
           <label for="deleteButton">Delete Song</label>
         </div>`;
 
-        document.getElementById('saveButton').addEventListener('click', addSong);
+        // document.getElementById('saveButton').addEventListener('click', addSong);
         document.getElementById("playButton").addEventListener('click', playSong);
         document.getElementById("deleteButton").addEventListener('click', deleteSong);
 
