@@ -5,11 +5,23 @@
  */
 
 
-import { SplendidGrandPiano } from "https://unpkg.com/smplr/dist/index.mjs";
+import { SplendidGrandPiano, Soundfont } from "https://unpkg.com/smplr/dist/index.mjs";
 
 window.onload = loaded;
 const context = new (window.AudioContext || window.webkitAudioContext)();
+
+// Initialize the instruments
 const piano = new SplendidGrandPiano(context);
+const marimba = new Soundfont(context, { instrument : 'marimba'});
+const trumpet = new Soundfont(context, { instrument : 'trumpet'});
+const flute = new Soundfont(context, { instrument: 'flute' });
+const guitar = new Soundfont(context, { instrument: 'acoustic_guitar_nylon' });
+const saxophone = new Soundfont(context, { instrument: 'alto_sax' });
+
+// Define the instruments in an object for easy access
+const instruments = {'piano' : piano, 'marimba' : marimba, 'trumpet' : trumpet, 
+                     'flute' : flute, 'guitar' : guitar, 'saxophone' : saxophone};
+var selectedInstrument = 'piano';
 
 const NOTE_NAMES = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5', 'E5', 'F5', 'G5'];
 
@@ -43,7 +55,7 @@ function loaded() {
                 selectedNotes[selectedCol-1] = '-';
             }
             else{
-                piano.start({ note: e.target.id.substring(0,2), duration: .5});
+                instruments[selectedInstrument].start({ note: e.target.id.substring(0,2), duration: .5});
                 e.target.style.backgroundColor = 'black';
                 e.target.style.backgroundImage = 'none';
                 for(var i = 0; i < 12; i++){
@@ -57,6 +69,12 @@ function loaded() {
             }
             
         }
+    });
+
+    //Sound select functionality
+    document.querySelector('#instrumentSelect').addEventListener('change', (e)=>{
+        selectedInstrument = e.target.value;
+        console.log(`Instrument changed to ${e.target.value}`);
     });
 
     //Tempo slider functionality
@@ -158,7 +176,7 @@ function populateInteractiveGrid() {
 function playSong(){
     const now = context.currentTime;
     selectedNotes.forEach((note, i) => {
-        piano.start({ note, time: now + i/tempoFactor, duration: 0.5 });
+        instruments[selectedInstrument].start({ note, time: now + i/tempoFactor, duration: 0.5 });
     });
 }
 
