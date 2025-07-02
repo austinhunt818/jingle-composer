@@ -39,3 +39,8 @@ h1{
   text-align: center;
   width: 60%;
 }
+
+.about-content ul{
+  list-style-type: none;
+  margin-bottom: 50px;
+}
