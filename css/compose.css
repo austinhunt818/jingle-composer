@@ -90,3 +90,9 @@
     margin-right: auto;
     margin-top: 0;
   }
+
+  #test{
+    margin: 200px;
+    display: flex;
+    flex-direction: column;
+  }

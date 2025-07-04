@@ -49,15 +49,19 @@ function loaded() {
             
             selectedButton = e.target.id.substring(0,2);
             selectedCol = e.target.id.substring(3);
+            //Deselect logic
             if(selectedNotes[selectedCol-1] != '-' && e.target.id.includes(selectedNotes[selectedCol-1])){
                 e.target.style.backgroundColor = 'white';
                 e.target.style.backgroundImage = 'url("../img/line.png")';
                 selectedNotes[selectedCol-1] = '-';
             }
             else{
+                //play the not
                 instruments[selectedInstrument].start({ note: e.target.id.substring(0,2), duration: .5});
+
                 e.target.style.backgroundColor = 'black';
                 e.target.style.backgroundImage = 'none';
+                //Deselect all other buttons
                 for(var i = 0; i < 12; i++){
                     var button = document.querySelector(`#${NOTE_NAMES[i]}-${selectedCol}`);
                     if(!(button === e.target)){
@@ -75,6 +79,14 @@ function loaded() {
     document.querySelector('#instrumentSelect').addEventListener('change', (e)=>{
         selectedInstrument = e.target.value;
         console.log(`Instrument changed to ${e.target.value}`);
+    });
+
+    const TEST_NOTE_NAMES = ['C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4', 'C5', 'C#5', 'D5', 'D#5', 'E5', 'F5', 'F#5', 'G5'];
+    //Test slider functionality
+    document.getElementById('noteSlider').addEventListener('input', (e)=>{
+        var noteIndex = parseInt(e.target.value);
+        document.getElementById('testNote').innerText = TEST_NOTE_NAMES[noteIndex];
+        instruments[selectedInstrument].start({ note: TEST_NOTE_NAMES[noteIndex], duration: .5 });
     });
 
     //Tempo slider functionality
