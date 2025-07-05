@@ -39,42 +39,6 @@ function loaded() {
         return;
       }
 
-    /**
-     * Functionality for selecting the notes and changing the ui accordingly
-     */
-    document.querySelector('.interactiveContainer').addEventListener('click', function (e){
-        var selectedButton = '';
-        var selectedCol = '';
-        if(e.target.tagName === 'BUTTON'){
-            
-            selectedButton = e.target.id.substring(0,2);
-            selectedCol = e.target.id.substring(3);
-            //Deselect logic
-            if(selectedNotes[selectedCol-1] != '-' && e.target.id.includes(selectedNotes[selectedCol-1])){
-                e.target.style.backgroundColor = 'white';
-                e.target.style.backgroundImage = 'url("../img/line.png")';
-                selectedNotes[selectedCol-1] = '-';
-            }
-            else{
-                //play the not
-                instruments[selectedInstrument].start({ note: e.target.id.substring(0,2), duration: .5});
-
-                e.target.style.backgroundColor = 'black';
-                e.target.style.backgroundImage = 'none';
-                //Deselect all other buttons
-                for(var i = 0; i < 12; i++){
-                    var button = document.querySelector(`#${NOTE_NAMES[i]}-${selectedCol}`);
-                    if(!(button === e.target)){
-                        button.style.backgroundColor = 'white';
-                        button.style.backgroundImage = 'url("../img/line.png")';
-                    }
-                }
-                selectedNotes[selectedCol-1] = selectedButton;
-            }
-            
-        }
-    });
-
     //Sound select functionality
     document.querySelector('#instrumentSelect').addEventListener('change', (e)=>{
         selectedInstrument = e.target.value;
@@ -83,11 +47,22 @@ function loaded() {
 
     const TEST_NOTE_NAMES = ['C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4', 'C5', 'C#5', 'D5', 'D#5', 'E5', 'F5', 'F#5', 'G5'];
     //Test slider functionality
-    document.getElementById('noteSlider').addEventListener('input', (e)=>{
-        var noteIndex = parseInt(e.target.value);
-        document.getElementById('testNote').innerText = TEST_NOTE_NAMES[noteIndex];
-        instruments[selectedInstrument].start({ note: TEST_NOTE_NAMES[noteIndex], duration: .5 });
-    });
+    for(let i = 0; i < 16; i++){
+        document.getElementById(`noteSlider-${i+1}`).addEventListener('input', (e)=>{
+            var noteIndex = parseInt(e.target.value);
+            if(noteIndex < 0 || noteIndex >= TEST_NOTE_NAMES.length){
+                document.getElementById(`testNote-${i+1}`).innerText = '_';
+                selectedNotes[i] = '-';
+                e.target.classList.remove("has-note");
+            }
+            else{
+                document.getElementById(`testNote-${i+1}`).innerText = TEST_NOTE_NAMES[noteIndex];
+                selectedNotes[i] = TEST_NOTE_NAMES[noteIndex];
+                instruments[selectedInstrument].start({ note: TEST_NOTE_NAMES[noteIndex], duration: .5 });
+                e.target.classList.add("has-note");
+            }
+        });
+    }
 
     //Tempo slider functionality
     document.getElementById('tempoSlider').addEventListener('input', ()=>{tempoFactor=document.getElementById('tempoSlider').value;});
@@ -115,12 +90,10 @@ function loaded() {
             tempoFactor = xhrResponse.tempo;
             document.getElementById('tempoSlider').value = tempoFactor;
             document.getElementById('titleInput').value = xhrResponse.name;
-            populateInteractiveGrid();
         });
         xhr.open("GET", `https://va4kva7kjc.execute-api.us-east-2.amazonaws.com/items/${songId}`);
         xhr.send();
     }
-    else populateInteractiveGrid();
 
     
 }
@@ -144,40 +117,6 @@ export function decodeSong(encoding){
         })
     }
     return selectedNotes;
-}
-
-
-/**
- * Dynamically populates the interactive portion of the page using a grid of buttons that create an interactive music staff
- */
-function populateInteractiveGrid() {
-    decodeSong(songEncoding);
-    for(var i = 1; i <= 16; i++){
-        document.querySelector('.interactiveContainer').innerHTML += `
-        <div class="noteColumn" id="note-${i}">
-            <button class="noteButton" aria-label="G5-${i}" id="G5-${i}"></button>
-            <button class="noteButton line" aria-label="F5-${i}" id="F5-${i}"></button>
-            <button class="noteButton" aria-label="E5-${i}" id="E5-${i}"></button>
-            <button class="noteButton line" aria-label="D5-${i}" id="D5-${i}"></button>
-            <button class="noteButton" aria-label="C5-${i}" id="C5-${i}"></button>
-            <button class="noteButton line" aria-label="B5-${i}" id="B4-${i}"></button>
-            <button class="noteButton" aria-label="A4-${i}" id="A4-${i}"></button>
-            <button class="noteButton line" aria-label="G4-${i}" id="G4-${i}"></button>
-            <button class="noteButton" aria-label="F4-${i}" id="F4-${i}"></button>
-            <button class="noteButton line" aria-label="E4-${i}" line" id="E4-${i}"></button>
-            <button class="noteButton" aria-label="D4-${i}" id="D4-${i}"></button>
-            <button class="noteButton" aria-label="C4-${i}" id="C4-${i}">------------</button>
-            <p class="noteLabel"> </p>
-        </div>
-        `;
-    }
-    selectedNotes.forEach((note, i) =>{
-        if(note != '-'){
-            var button = document.getElementById(note+ '-' + (i+1));
-            button.style.backgroundColor = 'black';
-            button.style.backgroundImage = 'none';
-        } 
-    });
 }
 
 
