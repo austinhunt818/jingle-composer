@@ -2,6 +2,12 @@
 <html lang="en">
 
 <head>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/placeholder.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="My App">
+
   <meta charset="utf-8">
   <title>Jingle Composer</title>
   <meta name="description" content="">
@@ -18,6 +24,11 @@
     <a href="view.html"><button class="navButton">View Songs</button></a>
     <a href="about.html"><button class="navButton">About</button></a>
   </div>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js");
+    }
+  </script>
 </body>
 <footer>
   <div class="footer-content">
@@ -26,6 +37,7 @@
   </div>
   
 </footer>
+
 
 
 </html>
